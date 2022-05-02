@@ -1,4 +1,5 @@
 import 'package:crud_flutter/colors/app_colors.dart';
+import 'package:crud_flutter/widgets/button_widget.dart';
 import 'package:crud_flutter/widgets/task_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -101,6 +102,44 @@ class AllTask extends StatelessWidget {
                       onDismissed: (DismissDirection direction) {},
                       confirmDismiss: (DismissDirection direction) async {
                         if (direction == DismissDirection.startToEnd) {
+                          showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              barrierColor: Colors.transparent,
+                              context: context,
+                              builder: (_) {
+                                return Container(
+                                  decoration: const BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20))),
+                                  height: 300,
+                                  width: double.maxFinite,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ButtonWidget(
+                                            backgroundColor:
+                                                AppColors.mainColor,
+                                            text: 'View',
+                                            textColor: Colors.white),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        ButtonWidget(
+                                            backgroundColor:
+                                                AppColors.mainColor,
+                                            text: 'Edit',
+                                            textColor:
+                                                AppColors.secondaryColor),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              });
                           return false;
                         } else {
                           return Future.delayed(const Duration(seconds: 1), () {
