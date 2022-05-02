@@ -1,4 +1,5 @@
 import 'package:crud_flutter/screens/add_task.dart';
+import 'package:crud_flutter/screens/all_task.dart';
 import 'package:crud_flutter/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: AddTask(),
+      home: const AllTask(),
     );
   }
 }
