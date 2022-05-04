@@ -1,6 +1,9 @@
 import 'package:crud_flutter/colors/app_colors.dart';
+import 'package:crud_flutter/screens/add_task.dart';
+import 'package:crud_flutter/screens/all_task.dart';
 import 'package:flutter/material.dart';
 import 'package:crud_flutter/widgets/button_widget.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -43,17 +46,39 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(
               height: MediaQuery.of(context).size.height / 2.4,
             ),
-            ButtonWidget(
-                backgroundColor: AppColors.mainColor,
-                text: 'Add Task',
-                textColor: Colors.white),
-            SizedBox(
+            InkWell(
+              onTap: () {
+                Get.to(
+                  () {
+                    return const AddTask();
+                  },
+                  transition: Transition.fade,
+                  duration: const Duration(milliseconds: 500),
+                );
+              },
+              child: ButtonWidget(
+                  backgroundColor: AppColors.mainColor,
+                  text: 'Add Task',
+                  textColor: Colors.white),
+            ),
+            const SizedBox(
               height: 20,
             ),
-            ButtonWidget(
-                backgroundColor: Colors.white,
-                text: 'View All',
-                textColor: AppColors.mainColor),
+            InkWell(
+              onTap: () {
+                Get.to(
+                  () {
+                    return const AllTask();
+                  },
+                  transition: Transition.fade,
+                  duration: const Duration(seconds: 1),
+                );
+              },
+              child: ButtonWidget(
+                  backgroundColor: Colors.white,
+                  text: 'View All',
+                  textColor: AppColors.mainColor),
+            ),
           ],
         ),
         decoration: const BoxDecoration(
