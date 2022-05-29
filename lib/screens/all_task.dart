@@ -17,6 +17,12 @@ class _AllTaskState extends State<AllTask> {
   final CollectionReference _taskTable =
       FirebaseFirestore.instance.collection('task_table');
 
+  Future<void> _delete(String taskTableId) async {
+    await _taskTable.doc(taskTableId).delete();
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You have successfully delete a task')));
+  }
+
   @override
   Widget build(BuildContext context) {
     final leftEditIcon = Container(
@@ -119,7 +125,7 @@ class _AllTaskState extends State<AllTask> {
                       return Dismissible(
                         background: leftEditIcon,
                         secondaryBackground: rightEditIcon,
-                        onDismissed: (DismissDirection direction) {},
+                        onDismissed: (DismissDirection direction) => _delete(documentSnapshot.id),
                         confirmDismiss: (DismissDirection direction) async {
                           if (direction == DismissDirection.startToEnd) {
                             showModalBottomSheet(
@@ -168,7 +174,7 @@ class _AllTaskState extends State<AllTask> {
                             });
                           }
                         },
-                        key: ObjectKey(index),
+                        key:  UniqueKey(),
                         child: Container(
                           margin: const EdgeInsets.only(
                               left: 20, right: 20, bottom: 10),
