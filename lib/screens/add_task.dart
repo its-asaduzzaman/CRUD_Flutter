@@ -1,16 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crud_flutter/colors/app_colors.dart';
 import 'package:crud_flutter/widgets/button_widget.dart';
 import 'package:crud_flutter/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AddTask extends StatelessWidget {
+class AddTask extends StatefulWidget {
   const AddTask({Key? key}) : super(key: key);
 
   @override
+  State<AddTask> createState() => _AddTaskState();
+}
+
+class _AddTaskState extends State<AddTask> {
+  final CollectionReference _taskTable =
+      FirebaseFirestore.instance.collection('task_table');
+  final TextEditingController nameController = TextEditingController();
+
+  final TextEditingController detailController = TextEditingController();
+
+  Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
+    if (documentSnapshot != null) {
+      nameController.text = documentSnapshot['name_task'];
+      detailController.text = documentSnapshot['detail_task'];
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    TextEditingController nameController = TextEditingController();
-    TextEditingController detailController = TextEditingController();
+    _create();
     return Scaffold(
       body: Container(
         width: double.maxFinite,
@@ -67,10 +85,22 @@ class AddTask extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 20),
-                  child: ButtonWidget(
-                      backgroundColor: AppColors.mainColor,
-                      text: 'Add',
-                      textColor: Colors.white),
+                  child: TextButton(
+                    onPressed: () async {
+                      final String name = nameController.text;
+                      final String details = detailController.text;
+                      if (details != null) {
+                        await _taskTable
+                            .add({"name_task": name, "detail_task": details});
+                        nameController.text = '';
+                        detailController.text = '';
+                      }
+                    },
+                    child: ButtonWidget(
+                        backgroundColor: AppColors.mainColor,
+                        text: 'Add',
+                        textColor: Colors.white),
+                  ),
                 ),
               ],
             ),
