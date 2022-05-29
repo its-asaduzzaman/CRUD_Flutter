@@ -125,7 +125,8 @@ class _AllTaskState extends State<AllTask> {
                       return Dismissible(
                         background: leftEditIcon,
                         secondaryBackground: rightEditIcon,
-                        onDismissed: (DismissDirection direction) => _delete(documentSnapshot.id),
+                        onDismissed: (DismissDirection direction) =>
+                            _delete(documentSnapshot.id),
                         confirmDismiss: (DismissDirection direction) async {
                           if (direction == DismissDirection.startToEnd) {
                             showModalBottomSheet(
@@ -147,11 +148,18 @@ class _AllTaskState extends State<AllTask> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          ButtonWidget(
-                                              backgroundColor:
-                                                  AppColors.mainColor,
-                                              text: 'View',
-                                              textColor: Colors.white),
+                                          TextButton(
+                                            onPressed: () {
+                                              Get.to(TaskDetails(
+                                                index: index,
+                                              ));
+                                            },
+                                            child: ButtonWidget(
+                                                backgroundColor:
+                                                    AppColors.mainColor,
+                                                text: 'View',
+                                                textColor: Colors.white),
+                                          ),
                                           const SizedBox(
                                             height: 10,
                                           ),
@@ -174,7 +182,7 @@ class _AllTaskState extends State<AllTask> {
                             });
                           }
                         },
-                        key:  UniqueKey(),
+                        key: UniqueKey(),
                         child: Container(
                           margin: const EdgeInsets.only(
                               left: 20, right: 20, bottom: 10),
