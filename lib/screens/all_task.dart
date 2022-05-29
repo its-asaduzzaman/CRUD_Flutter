@@ -1,11 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crud_flutter/colors/app_colors.dart';
 import 'package:crud_flutter/widgets/button_widget.dart';
 import 'package:crud_flutter/widgets/task_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AllTask extends StatelessWidget {
+class AllTask extends StatefulWidget {
   const AllTask({Key? key}) : super(key: key);
+
+  @override
+  State<AllTask> createState() => _AllTaskState();
+}
+
+class _AllTaskState extends State<AllTask> {
+  final CollectionReference _taskTable =
+      FirebaseFirestore.instance.collection('task_table');
 
   @override
   Widget build(BuildContext context) {
@@ -98,69 +107,82 @@ class AllTask extends StatelessWidget {
             ),
           ),
           Flexible(
-              child: ListView.builder(
-                  itemCount: myData.length,
-                  itemBuilder: (context, index) {
-                    return Dismissible(
-                      background: leftEditIcon,
-                      secondaryBackground: rightEditIcon,
-                      onDismissed: (DismissDirection direction) {},
-                      confirmDismiss: (DismissDirection direction) async {
-                        if (direction == DismissDirection.startToEnd) {
-                          showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
-                              barrierColor: Colors.transparent,
-                              context: context,
-                              builder: (_) {
-                                return Container(
-                                  decoration: const BoxDecoration(
-                                      color: Colors.black54,
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20))),
-                                  height: 300,
-                                  width: double.maxFinite,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        ButtonWidget(
-                                            backgroundColor:
-                                                AppColors.mainColor,
-                                            text: 'View',
-                                            textColor: Colors.white),
-                                        const SizedBox(
-                                          height: 10,
+              child: StreamBuilder(
+                stream: _taskTable.snapshots(),
+                builder: (context,AsyncSnapshot<QuerySnapshot>streamSnapshot){
+                  if(streamSnapshot.hasData){
+                    return ListView.builder(
+                        itemCount: streamSnapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          final DocumentSnapshot documentSnapshot = streamSnapshot.data!.docs[index];
+                          return Dismissible(
+                            background: leftEditIcon,
+                            secondaryBackground: rightEditIcon,
+                            onDismissed: (DismissDirection direction) {},
+                            confirmDismiss: (DismissDirection direction) async {
+                              if (direction == DismissDirection.startToEnd) {
+                                showModalBottomSheet(
+                                    backgroundColor: Colors.transparent,
+                                    barrierColor: Colors.transparent,
+                                    context: context,
+                                    builder: (_) {
+                                      return Container(
+                                        decoration: const BoxDecoration(
+                                            color: Colors.black54,
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(20),
+                                                topRight: Radius.circular(20))),
+                                        height: 300,
+                                        width: double.maxFinite,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(20.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            children: [
+                                              ButtonWidget(
+                                                  backgroundColor:
+                                                  AppColors.mainColor,
+                                                  text: 'View',
+                                                  textColor: Colors.white),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              ButtonWidget(
+                                                  backgroundColor:
+                                                  AppColors.mainColor,
+                                                  text: 'Edit',
+                                                  textColor:
+                                                  AppColors.secondaryColor),
+                                            ],
+                                          ),
                                         ),
-                                        ButtonWidget(
-                                            backgroundColor:
-                                                AppColors.mainColor,
-                                            text: 'Edit',
-                                            textColor:
-                                                AppColors.secondaryColor),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              });
-                          return false;
-                        } else {
-                          return Future.delayed(const Duration(seconds: 1), () {
-                            return direction == DismissDirection.endToStart;
-                          });
-                        }
-                      },
-                      key: ObjectKey(index),
-                      child: Container(
-                        margin: const EdgeInsets.only(
-                            left: 20, right: 20, bottom: 10),
-                        child: TaskWidget(
-                            task: myData[index], color: Colors.blueGrey),
-                      ),
-                    );
-                  }))
+                                      );
+                                    });
+                                return false;
+                              } else {
+                                return Future.delayed(const Duration(seconds: 1), () {
+                                  return direction == DismissDirection.endToStart;
+                                });
+                              }
+                            },
+                            key: ObjectKey(index),
+                            child: Container(
+                              margin: const EdgeInsets.only(
+                                  left: 20, right: 20, bottom: 10),
+                              child: TaskWidget(
+                                  task: documentSnapshot['name_task'], color: Colors.blueGrey),
+                            ),
+                          );
+                        });
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+
+
+              ))
         ],
       ),
     );
