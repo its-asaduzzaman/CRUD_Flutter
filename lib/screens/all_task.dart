@@ -81,7 +81,7 @@ class AllTask extends StatelessWidget {
                   child: Container(),
                 ),
                 Icon(
-                  Icons.calendar_month,
+                  Icons.calendar_today,
                   color: AppColors.secondaryColor,
                 ),
                 const SizedBox(
