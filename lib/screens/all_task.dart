@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crud_flutter/colors/app_colors.dart';
+import 'package:crud_flutter/screens/add_task.dart';
 import 'package:crud_flutter/screens/home_screen.dart';
 import 'package:crud_flutter/screens/task_details.dart';
 import 'package:crud_flutter/widgets/button_widget.dart';
@@ -87,23 +88,33 @@ class _AllTaskState extends State<AllTask> {
             padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
             child: Row(
               children: [
-                Icon(
-                  Icons.home,
-                  color: AppColors.secondaryColor,
+                InkWell(
+                  onTap: () {
+                    Get.to(HomeScreen());
+                  },
+                  child: Icon(
+                    Icons.home,
+                    color: AppColors.secondaryColor,
+                  ),
                 ),
                 const SizedBox(
                   width: 10,
                 ),
-                Container(
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                  width: 25,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(12.5),
+                InkWell(
+                  onTap: () {
+                    Get.to(AddTask());
+                  },
+                  child: Container(
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                    width: 25,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(12.5),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -164,9 +175,33 @@ class _AllTaskState extends State<AllTask> {
                                         children: [
                                           TextButton(
                                             onPressed: () {
-                                              Get.to(TaskDetails(
-                                                index: index,
-                                              ));
+                                              Navigator.pop(context);
+                                              // Get.to(TaskDetails(
+                                              //   index: index,
+                                              // ));
+
+                                              Get.defaultDialog(
+                                                title: "",
+                                                content: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      documentSnapshot[
+                                                          'name_task'],
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Text(documentSnapshot[
+                                                        'detail_task']),
+                                                  ],
+                                                ),
+                                              );
                                             },
                                             child: ButtonWidget(
                                                 backgroundColor:
