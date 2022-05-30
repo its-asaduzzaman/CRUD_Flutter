@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crud_flutter/colors/app_colors.dart';
+import 'package:crud_flutter/screens/home_screen.dart';
 import 'package:crud_flutter/screens/task_details.dart';
 import 'package:crud_flutter/widgets/button_widget.dart';
 import 'package:crud_flutter/widgets/task_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../widgets/textfield_widget.dart';
 
 class AllTask extends StatefulWidget {
   const AllTask({Key? key}) : super(key: key);
@@ -21,6 +24,17 @@ class _AllTaskState extends State<AllTask> {
     await _taskTable.doc(taskTableId).delete();
     ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('You have successfully delete a task')));
+  }
+
+  final TextEditingController _nameController = TextEditingController();
+
+  final TextEditingController _detailController = TextEditingController();
+
+  Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
+    if (documentSnapshot != null) {
+      _nameController.text = documentSnapshot['name_task'];
+      _detailController.text = documentSnapshot['detail_task'];
+    }
   }
 
   @override
@@ -58,7 +72,7 @@ class _AllTaskState extends State<AllTask> {
             padding: const EdgeInsets.only(left: 20, top: 80),
             child: InkWell(
                 onTap: () {
-                  Get.back();
+                  Get.to(HomeScreen());
                 },
                 child: Icon(Icons.arrow_back)),
             width: double.maxFinite,
@@ -70,7 +84,7 @@ class _AllTaskState extends State<AllTask> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.only(left: 20, right: 20),
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
             child: Row(
               children: [
                 Icon(
@@ -163,12 +177,118 @@ class _AllTaskState extends State<AllTask> {
                                           const SizedBox(
                                             height: 10,
                                           ),
-                                          ButtonWidget(
-                                              backgroundColor:
-                                                  AppColors.mainColor,
-                                              text: 'Edit',
-                                              textColor:
-                                                  AppColors.secondaryColor),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              _update();
+                                              Get.defaultDialog(
+                                                  title: "Update",
+                                                  content: Container(
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10.0),
+                                                      child: Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    left: 10,
+                                                                    top: 10,
+                                                                    right: 10),
+                                                            child:
+                                                                TextFieldWidget(
+                                                              textHint:
+                                                                  documentSnapshot[
+                                                                      'name_task'],
+                                                              borderRadius: 30,
+                                                              textController:
+                                                                  _nameController,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      left: 10,
+                                                                      top: 20,
+                                                                      right:
+                                                                          10),
+                                                              child:
+                                                                  TextFieldWidget(
+                                                                textController:
+                                                                    _detailController,
+                                                                textHint:
+                                                                    documentSnapshot[
+                                                                        'detail_task'],
+                                                                borderRadius:
+                                                                    15,
+                                                                maxLine: 5,
+                                                              )),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    left: 10),
+                                                            child: TextButton(
+                                                              onPressed:
+                                                                  () async {
+                                                                final String
+                                                                    name =
+                                                                    _nameController
+                                                                        .text;
+                                                                final String
+                                                                    details =
+                                                                    _detailController
+                                                                        .text;
+                                                                if (details !=
+                                                                    null) {
+                                                                  await _taskTable
+                                                                      .doc(documentSnapshot!
+                                                                          .id)
+                                                                      .update({
+                                                                    "name_task":
+                                                                        name,
+                                                                    "detail_task":
+                                                                        details
+                                                                  });
+                                                                  _nameController
+                                                                      .text = '';
+                                                                  _detailController
+                                                                      .text = '';
+                                                                }
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: ButtonWidget(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .mainColor,
+                                                                  text: 'Add',
+                                                                  textColor:
+                                                                      Colors
+                                                                          .white),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ));
+                                            },
+                                            child: ButtonWidget(
+                                                backgroundColor:
+                                                    AppColors.mainColor,
+                                                text: 'Edit',
+                                                textColor:
+                                                    AppColors.secondaryColor),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -186,16 +306,9 @@ class _AllTaskState extends State<AllTask> {
                         child: Container(
                           margin: const EdgeInsets.only(
                               left: 20, right: 20, bottom: 10),
-                          child: TextButton(
-                            onPressed: () {
-                              Get.to(TaskDetails(
-                                index: index,
-                              ));
-                            },
-                            child: TaskWidget(
-                                task: documentSnapshot['name_task'],
-                                color: Colors.blueGrey),
-                          ),
+                          child: TaskWidget(
+                              task: documentSnapshot['name_task'],
+                              color: Colors.blueGrey),
                         ),
                       );
                     });

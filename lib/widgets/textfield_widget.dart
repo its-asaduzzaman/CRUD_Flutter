@@ -24,6 +24,7 @@ class TextFieldWidget extends StatelessWidget {
         filled: true,
         fillColor: AppColors.textHolder,
         hintText: textHint,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius),
           borderSide: const BorderSide(

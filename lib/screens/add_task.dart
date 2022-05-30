@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crud_flutter/colors/app_colors.dart';
+import 'package:crud_flutter/screens/all_task.dart';
 import 'package:crud_flutter/widgets/button_widget.dart';
 import 'package:crud_flutter/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +16,14 @@ class AddTask extends StatefulWidget {
 class _AddTaskState extends State<AddTask> {
   final CollectionReference _taskTable =
       FirebaseFirestore.instance.collection('task_table');
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
-  final TextEditingController detailController = TextEditingController();
+  final TextEditingController _detailController = TextEditingController();
 
   Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
     if (documentSnapshot != null) {
-      nameController.text = documentSnapshot['name_task'];
-      detailController.text = documentSnapshot['detail_task'];
+      _nameController.text = documentSnapshot['name_task'];
+      _detailController.text = documentSnapshot['detail_task'];
     }
   }
 
@@ -66,7 +67,7 @@ class _AddTaskState extends State<AddTask> {
                   child: TextFieldWidget(
                     textHint: 'Task Name',
                     borderRadius: 30,
-                    textController: nameController,
+                    textController: _nameController,
                   ),
                 ),
                 const SizedBox(
@@ -75,7 +76,7 @@ class _AddTaskState extends State<AddTask> {
                 Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: TextFieldWidget(
-                      textController: detailController,
+                      textController: _detailController,
                       textHint: 'Details',
                       borderRadius: 15,
                       maxLine: 5,
@@ -87,14 +88,15 @@ class _AddTaskState extends State<AddTask> {
                   padding: const EdgeInsets.only(left: 20),
                   child: TextButton(
                     onPressed: () async {
-                      final String name = nameController.text;
-                      final String details = detailController.text;
+                      final String name = _nameController.text;
+                      final String details = _detailController.text;
                       if (details != null) {
                         await _taskTable
                             .add({"name_task": name, "detail_task": details});
-                        nameController.text = '';
-                        detailController.text = '';
+                        _nameController.text = '';
+                        _detailController.text = '';
                       }
+                      Get.to(AllTask());
                     },
                     child: ButtonWidget(
                         backgroundColor: AppColors.mainColor,
